@@ -5,6 +5,8 @@ from tkinter.constants import DISABLED
 from types import LambdaType
 from PolarProjectMotors import StepperMotor
 
+
+
 class App:
     def __init__(self, root):
         self.leftStepper = StepperMotor(15, 18, 23, 24)
@@ -21,13 +23,16 @@ class App:
         root.geometry(alignstr)
         root.resizable(width=False, height=False)
 
+
         #open hpgl file button
-        btnOpenFile=tk.Button(root, text="Open file", command=self.openFile) 
-        btnOpenFile.place(x=700,y=470,width=70,height=25)
+        self.btnOpenFile=tk.Button(root, text="Open file", command=self.openFile) 
+        self.btnOpenFile.place(x=700,y=470,width=70,height=25)
+
 
         #execute loaded project button
         self.btnExecute=tk.Button(root, text="Execute", command=self.sample) 
         self.btnExecute.place(x=300,y=270,width=60,height=60)
+
 
         #function opening files to read
     def openFile(self):
@@ -36,15 +41,17 @@ class App:
         DATAPOINTS = self.dataFile.read()
         self.dataFile.close()
 
+
         #function disable buttons
     def disableButtons(self):
         self.btnExecute['state'] = 'disabled'
-        self.dataFile['state'] = 'disabled'
+        self.btnOpenFile['state'] = 'disabled'
+
 
         #function enable buttons
     def enableButtons(self):
         self.btnExecute['state'] = 'normal'
-        self.btnExecute['state'] = 'normal'
+        self.btnOpenFile['state'] = 'normal'
 
 
     #function calling in execution of stepper 
@@ -62,6 +69,7 @@ class App:
         leftStepperThread.join()
         rightStepperThread.join()
     
+
     #lambda function spawning a new dameon thread that will spawn 
     #threads and execute stepper motor calls
     def sample(self):
@@ -80,7 +88,8 @@ class App:
 
         executeSampleThread = threading.Thread(target = executeSampleThreadLambda, daemon=True)
         executeSampleThread.start()
-    
+
+
 
 #main menu
 if __name__ == "__main__":
