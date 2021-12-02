@@ -1,9 +1,9 @@
 import tkinter as tk
 import threading
-from tkinter import filedialog
 from tkinter.constants import DISABLED
 from types import LambdaType
 from PolarProjectMotors import StepperMotor
+from Calculations import DataProccessing
 
 
 
@@ -11,6 +11,7 @@ class App:
     def __init__(self, root):
         self.leftStepper = StepperMotor(15, 18, 23, 24)
         self.rightStepper = StepperMotor(25, 8, 12, 16)
+        self.ProccesData = DataProccessing
 
         #setting title
         root.title("Polar Project")
@@ -30,19 +31,27 @@ class App:
 
 
         #execute loaded project button
-        self.btnExecute=tk.Button(root, text="Execute", command=self.sample) 
+        self.btnExecute=tk.Button(root, text="Execute", command=self.execute) 
         self.btnExecute.place(x=300,y=270,width=60,height=60)
+
+
+        #button stoping motors
+        self.btnStopMotors=tk.Button(root, text="Stop", command=self.stopMotors) 
+        self.btnStopMotors.place(x=200,y=150,width=60,height=60)
 
 
         #function opening files to read
     def openFile(self):
-        self.dataFile = filedialog.askopenfilename(filetypes=(("HPGL Files", "*.hpgl"),))
-        self.dataFile = open(self.dataFile, 'r')
-        DATAPOINTS = self.dataFile.read()
-        self.dataFile.close()
+            self.ProccesData.loadData(self)
 
 
-        #function disable buttons
+    # buttong stopping execution
+    def stopMotors(self):
+        self.rightStepper.stopMotors(self)
+        self.enableButtons()
+
+
+    #function disable buttons
     def disableButtons(self):
         self.btnExecute['state'] = 'disabled'
         self.btnOpenFile['state'] = 'disabled'
@@ -58,21 +67,26 @@ class App:
     #motors in parralel
     def stepperMotorsCall(self,lDirection,lNoofSteps,lSpeed,rdirection,rNoOfSteps,rSpeed):
 
-        #creating threads for each stepper
-        leftStepperThread = threading.Thread(target  = self.leftStepper.stepperControl, args=[lDirection,lNoofSteps,lSpeed], daemon = True )
-        rightStepperThread = threading.Thread(target = self.rightStepper.stepperControl, args=[rdirection,rNoOfSteps,rSpeed], daemon = True)
+        if (self.rightStepper.stopMotor == False):
 
-        leftStepperThread.start()
-        rightStepperThread.start()
+            #creating threads for each stepper
+            leftStepperThread = threading.Thread(target  = self.leftStepper.stepperControl, args=[lDirection,lNoofSteps,lSpeed], daemon = True )
+            rightStepperThread = threading.Thread(target = self.rightStepper.stepperControl, args=[rdirection,rNoOfSteps,rSpeed], daemon = True)
 
-        #joining threads
-        leftStepperThread.join()
-        rightStepperThread.join()
+            leftStepperThread.start()
+            rightStepperThread.start()
+
+            #joining threads
+            leftStepperThread.join()
+            rightStepperThread.join()
+        
     
 
     #lambda function spawning a new dameon thread that will spawn 
     #threads and execute stepper motor calls
-    def sample(self):
+    def execute(self):
+        self.rightStepper.startMotors()
+
         executeSampleThreadLambda = lambda:(
             self.disableButtons(),
             self.stepperMotorsCall("left", 150,0.001, "left", 400,0),

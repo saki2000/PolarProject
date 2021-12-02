@@ -7,12 +7,13 @@ class StepperMotor():               #Stepper Motor Class - Creating stepper moto
     DELAY = 0.0025                  #Deley which pin is polarized bewteen steps
                                     #Halfstep sequnece
     HALFSTEP_SEQ = [[0,1,0,0], [0,1,0,1], [0,0,0,1], [1,0,0,1], [1,0,0,0], [0,0,1,1], [0,0,1,0], [0,1,1,0]]
+    stopMotor = False
     
 
     #Constructor taking pin numbers that stepper is connected to raspberry pi
     def __init__(self, pin_a, pin_b, pin_c, pin_d):
         GPIO.setmode(GPIO.BCM)
-        GPIO.setwarnings(False)     
+        GPIO.setwarnings(False)   
         self.step_index = 1
         self.control_pins = [pin_a, pin_b, pin_c, pin_d]
         for pin in range(len(self.control_pins)):
@@ -75,7 +76,11 @@ class StepperMotor():               #Stepper Motor Class - Creating stepper moto
                 pointComplete = True    #changing bool and ending while loop
 
     
+    def stopMotors(self):
+        self.stopMotor = True
 
+    def startMotors(self):
+        self.stopMotor = False
 
    
 
