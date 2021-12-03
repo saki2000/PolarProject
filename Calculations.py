@@ -19,7 +19,7 @@ class DataProccessing():
         self.dataFile = filedialog.askopenfilename(filetypes=(("HPGL Files", "*.hpgl"),))
         self.dataFile = open(self.dataFile, 'r')
         dataPoints = self.dataFile.read()           #reading from the file
-        self.dataFile.close()                        #closing file
+        self.dataFile.close()                       #closing file
         splitData = dataPoints.split(";")           #spliting data on each occurance of ;
 
         print (splitData)
