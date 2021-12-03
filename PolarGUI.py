@@ -47,7 +47,7 @@ class App:
 
     # buttong stopping execution
     def stopMotors(self):
-        self.rightStepper.stopMotors(self)
+        self.rightStepper.stopMotors()
         self.enableButtons()
 
 
