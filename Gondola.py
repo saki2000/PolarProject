@@ -2,8 +2,6 @@ import RPi.GPIO as GPIO
 import time
 
 
-
-
 class Gondola:
     def __init__(self, pin):
         GPIO.setmode(GPIO.BCM)
@@ -16,15 +14,16 @@ class Gondola:
 
 
     def penDown(self):
-        self.servo.ChangeDutyCycle(1)
+        self.servo.ChangeDutyCycle(6)
+
 
     def penUp(self):
         self.servo.ChangeDutyCycle(6)
 
 
 gondola = Gondola(21)
-#gondola.penDown()
-time.sleep(10)
+gondola.penDown()
+time.sleep(5)
 #gondola.penUp()
 
 
