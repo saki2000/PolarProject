@@ -14,17 +14,18 @@ class Gondola:
 
 
     def penDown(self):
-        self.servo.ChangeDutyCycle(6)
+        self.servo.ChangeDutyCycle(1)
 
 
     def penUp(self):
-        self.servo.ChangeDutyCycle(6)
+        self.servo.ChangeDutyCycle(12)
 
 
 gondola = Gondola(21)
+time.sleep(3)
 gondola.penDown()
 time.sleep(5)
-#gondola.penUp()
+gondola.penUp()
 
 
 
