@@ -1,33 +1,43 @@
 import RPi.GPIO as GPIO
 import time
+from gpiozero import Servo 
+from gpiozero.pins.pigpio import PiGPIOFactory
+
+
 
 
 class Gondola:
-    def __init__(self, pin):
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setwarnings(False)  
-        GPIO.setup(pin, GPIO.OUT)
+    def __init__(self, pin,):
 
-        #setting up  GPIO output with 50hz  pulse
-        self.servo = GPIO.PWM(pin,50)
-        self.servo.start(0)
+        factory = PiGPIOFactory()
+        self.servo = Servo (pin, pin_factory=factory)
+
 
 
     def penDown(self):
-        self.servo.ChangeDutyCycle(1)
+        self.servo.max()
 
 
     def penUp(self):
-        self.servo.ChangeDutyCycle(12)
+        self.servo.min()
 
 
-gondola = Gondola(21)
-time.sleep(3)
+
+gondola = Gondola(12)
+time.sleep(1)
 gondola.penDown()
-time.sleep(5)
+time.sleep(1)
 gondola.penUp()
-
-
-
-
+time.sleep(1)
+gondola.penDown()
+time.sleep(1)
+gondola.penUp()
+time.sleep(1)
+gondola.penDown()
+time.sleep(1)
+gondola.penUp()
+time.sleep(1)
+gondola.penDown()
+time.sleep(1)
+gondola.penUp()
 
