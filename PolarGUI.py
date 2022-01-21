@@ -3,6 +3,7 @@ import threading
 from tkinter.constants import DISABLED
 from types import LambdaType
 from PolarProjectMotors import StepperMotor
+from Gondola import Gondola
 from Calculations import DataProccessing
 
 
@@ -11,6 +12,7 @@ class App:
     def __init__(self, root):
         self.leftStepper = StepperMotor(15, 18, 23, 24)
         self.rightStepper = StepperMotor(25, 8, 12, 16)
+        gondola = Gondola(7)
         self.ProccesData = DataProccessing
 
         #setting title
