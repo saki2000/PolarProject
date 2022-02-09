@@ -24,40 +24,40 @@ class StepperMotor():               #Stepper Motor Class - Creating stepper moto
     #half step sequence for stepper going left
     #stepping left is perforemd by following from last indext to first
     #when stepper reach first index in halfstep sequence, index changing to the very last
-    def halfStepLeft(self, speed):
+    def halfStepLeft(self, speedRatio):
         self.step_index -= 1
         if self.step_index < 0:
             self.step_index = len(self.HALFSTEP_SEQ) - 1
         for pin in range(len(self.control_pins)):
             GPIO.output(self.control_pins[pin], self.HALFSTEP_SEQ[self.step_index][pin])
-        time.sleep(self.DELAY + speed)
+        time.sleep(self.DELAY / speedRatio)
 
 
     #full step left
-    def stepLeft(self,speed):
-        self.halfStepLeft(speed)
-        self.halfStepLeft(speed)
+    def stepLeft(self,speedRatio):
+        self.halfStepLeft(speedRatio)
+        self.halfStepLeft(speedRatio)
 
 
     #same as stepping left but going from first index to last - diffrent direction
-    def halfStepRight(self, speed):
+    def halfStepRight(self, speedRatio):
         self.step_index += 1                                  
         if self.step_index > len(self.HALFSTEP_SEQ) - 1:
             self.step_index = 0
         for pin in range(len(self.control_pins)):
             GPIO.output(self.control_pins[pin], self.HALFSTEP_SEQ[self.step_index][pin])
-        time.sleep(self.DELAY + speed) 
+        time.sleep(self.DELAY / speedRatio) 
 
 
     #full step right
-    def stepRight(self,speed):
-        self.halfStepRight(speed)
-        self.halfStepRight(speed)
+    def stepRight(self,speedRatio):
+        self.halfStepRight(speedRatio)
+        self.halfStepRight(speedRatio)
 
 
     #function controling left stepper motor
     #executes number of steps in given direction and speed
-    def stepperControl(self,direction, noOfSteps, speed):
+    def stepperControl(self,direction, noOfSteps, speedRatio):
 
         pointComplete = False
 
@@ -67,10 +67,10 @@ class StepperMotor():               #Stepper Motor Class - Creating stepper moto
         while pointComplete == False:   #while loop to execute all steps passed 
 
             if(direction == "left"):    #if statment checking for direction
-                self.stepLeft(speed)
+                self.stepLeft(speedRatio)
                 noOfSteps -= 1           
             else:
-                self.stepRight(speed)
+                self.stepRight(speedRatio)
                 noOfSteps -= 1   
             if noOfSteps == 0:
                 pointComplete = True    #changing bool and ending while loop

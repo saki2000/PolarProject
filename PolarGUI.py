@@ -12,8 +12,8 @@ class App:
     def __init__(self, root):
         self.leftStepper = StepperMotor(15, 18, 23, 24)
         self.rightStepper = StepperMotor(25, 8, 12, 16)
-        gondola = Gondola(7)
-        self.ProccesData = DataProccessing
+        self.gondola = Gondola(7)
+        self.proccessData = DataProccessing
 
         #setting title
         root.title("Polar Project")
@@ -37,14 +37,33 @@ class App:
         self.btnExecute.place(x=300,y=270,width=60,height=60)
 
 
+        #servo test button down
+        self.btnExecute=tk.Button(root, text="ServoTestDown", command=self.ServoTestDown) 
+        self.btnExecute.place(x=400,y=300,width=60,height=60)
+
+        #servo test button down
+        self.btnExecute=tk.Button(root, text="ServoTestUp", command=self.ServoTestUp) 
+        self.btnExecute.place(x=470,y=350,width=60,height=60)
+
+
         #button stoping motors
         self.btnStopMotors=tk.Button(root, text="Stop", command=self.stopMotors) 
         self.btnStopMotors.place(x=200,y=150,width=60,height=60)
 
 
-        #function opening files to read
+    #testing servo down
+    def ServoTestDown(self):
+        self.gondola.penDown()
+    #testing servo up
+
+
+    def ServoTestUp(self):
+        self.gondola.penUp()
+
+
+    #function opening files to read
     def openFile(self):
-            self.ProccesData.loadData(self)
+            self.proccessData.loadData(self)
 
 
     # buttong stopping execution
@@ -87,19 +106,21 @@ class App:
     #lambda function spawning a new dameon thread that will spawn 
     #threads and execute stepper motor calls
     def execute(self):
-        self.rightStepper.startMotors()
+
+        #changing status of motors - bool true
+        self.rightStepper.startMotors()  
 
         executeSampleThreadLambda = lambda:(
             self.disableButtons(),
-            self.stepperMotorsCall("left", 150,0.001, "left", 400,0),
-            self.stepperMotorsCall("left", 50,0, "right", 200,0.0005),
-            self.stepperMotorsCall("right", 500,0, "right", 500,0.005),
-            self.stepperMotorsCall("left", 500,0.005, "left", 500,0),
-            self.stepperMotorsCall("right", 500,0, "right", 100,0.0005),
-            self.stepperMotorsCall("right", 400,0.0007, "right", 200,0),
-            self.stepperMotorsCall("left", 500,0.0001, "left", 500,0),
-            self.stepperMotorsCall("right", 400,0, "left", 200,0.0001),
-            self.stepperMotorsCall("left", 200,0, "right", 600,0.0005),
+            self.stepperMotorsCall("left", 150,2, "left", 400,1),
+            self.stepperMotorsCall("left", 50,1, "right", 200,3),
+            self.stepperMotorsCall("right", 500,1, "right", 500,6),
+            self.stepperMotorsCall("left", 500,10, "left", 500,0),
+            self.stepperMotorsCall("right", 500,1, "right", 100,6),
+            self.stepperMotorsCall("right", 400,12, "right", 200,0),
+            self.stepperMotorsCall("left", 500,1, "left", 500,1),
+            self.stepperMotorsCall("right", 400,1, "left", 200,2),
+            self.stepperMotorsCall("left", 200,1, "right", 600,1.2),
             self.enableButtons())
 
         executeSampleThread = threading.Thread(target = executeSampleThreadLambda, daemon=True)

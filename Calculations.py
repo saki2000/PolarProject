@@ -1,7 +1,7 @@
 from tkinter import filedialog
 from math import pi
 
-RADIUS = 4
+RADIUS = 40
 
 class DataProccessing():
 
@@ -9,7 +9,7 @@ class DataProccessing():
 
     def __init__(self):
 
-        Circumference = 2*pi*RADIUS
+        circumference = 2*pi*RADIUS
         
 
     #function loading data from the hpgl file

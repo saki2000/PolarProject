@@ -18,25 +18,6 @@ class Gondola:
 
     def penUp(self):
         self.servo.min()
-        
-
-    def test (self):
-        time.sleep(1)
-        self.penDown()
-        time.sleep(1)
-        self.penUp()
-        time.sleep(1)
-        self.penDown()
-        time.sleep(1)
-        self.penUp()
-        time.sleep(1)
-        self.penDown()
-        time.sleep(1)
-        self.penUp()
-        time.sleep(1)
-        self.penDown()
-        time.sleep(1)
-        self.penUp()
 
 
 
