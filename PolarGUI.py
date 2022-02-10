@@ -112,15 +112,8 @@ class App:
 
         executeSampleThreadLambda = lambda:(
             self.disableButtons(),
-            self.stepperMotorsCall("left", 150,2, "left", 400,1),
-            self.stepperMotorsCall("left", 50,1, "right", 200,3),
-            self.stepperMotorsCall("right", 500,1, "right", 500,6),
-            self.stepperMotorsCall("left", 500,10, "left", 500,0),
-            self.stepperMotorsCall("right", 500,1, "right", 100,6),
-            self.stepperMotorsCall("right", 400,12, "right", 200,0),
-            self.stepperMotorsCall("left", 500,1, "left", 500,1),
-            self.stepperMotorsCall("right", 400,1, "left", 200,2),
-            self.stepperMotorsCall("left", 200,1, "right", 600,1.2),
+            self.stepperMotorsCall("right", 96,1, "right", 96,1),
+
             self.enableButtons())
 
         executeSampleThread = threading.Thread(target = executeSampleThreadLambda, daemon=True)
@@ -134,3 +127,16 @@ if __name__ == "__main__":
     root = tk.Tk()
     app = App(root)
     root.mainloop()
+
+
+
+
+            #self.stepperMotorsCall("left", 150,2, "left", 400,1),
+           # self.stepperMotorsCall("left", 50,1, "right", 200,3),
+           # self.stepperMotorsCall("right", 500,1, "right", 500,6),
+          #  self.stepperMotorsCall("left", 500,10, "left", 500,0),
+            #self.stepperMotorsCall("right", 500,1, "right", 100,6),
+           # self.stepperMotorsCall("right", 400,12, "right", 200,0),
+          #  self.stepperMotorsCall("left", 200,1, "right", 600,1.2),
+           # self.stepperMotorsCall("left", 500,1, "left", 500,1),
+           # self.stepperMotorsCall("right", 400,1, "left", 200,2),
