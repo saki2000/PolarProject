@@ -4,7 +4,7 @@ from tkinter.constants import DISABLED
 from types import LambdaType
 from PolarProjectMotors import StepperMotor
 from Gondola import Gondola
-from Calculations import DataProccessing
+from PointsProccessing import DataProccessing
 
 
 
@@ -33,16 +33,16 @@ class App:
 
 
         #execute loaded project button
-        self.btnExecute=tk.Button(root, text="Execute", command=self.execute) 
+        self.btnExecute=tk.Button(root, text="Execute", command=self.executeDrawing) 
         self.btnExecute.place(x=300,y=270,width=60,height=60)
 
 
         #servo test button down
-        self.btnExecute=tk.Button(root, text="ServoTestDown", command=self.ServoTestDown) 
+        self.btnExecute=tk.Button(root, text="servoDown", command=self.servoDown) 
         self.btnExecute.place(x=400,y=300,width=60,height=60)
 
         #servo test button down
-        self.btnExecute=tk.Button(root, text="ServoTestUp", command=self.ServoTestUp) 
+        self.btnExecute=tk.Button(root, text="servoUp", command=self.servoUp) 
         self.btnExecute.place(x=470,y=350,width=60,height=60)
 
 
@@ -52,12 +52,12 @@ class App:
 
 
     #testing servo down
-    def ServoTestDown(self):
+    def servoDown(self):
         self.gondola.penDown()
     #testing servo up
 
 
-    def ServoTestUp(self):
+    def servoUp(self):
         self.gondola.penUp()
 
 
@@ -105,7 +105,7 @@ class App:
 
     #lambda function spawning a new dameon thread that will spawn 
     #threads and execute stepper motor calls
-    def execute(self):
+    def stepExecute(self):
 
         #changing status of motors - bool true
         self.rightStepper.startMotors()  
@@ -120,6 +120,14 @@ class App:
         executeSampleThread.start()
 
 
+
+
+
+
+
+    def executeDrawing(self):
+
+        self.stepExecute(self)
 
 #main menu
 if __name__ == "__main__":
