@@ -100,15 +100,19 @@ class PositionCalculation():
         return numberOfSteps, direction, newCableLength
 
 
+    #function calculating ration - speed of stepper motor
 
+    def ratioCalculation (numberOfStepsLeft, numberOfStepsRight):
 
+        if(numberOfStepsLeft <= numberOfStepsRight):
+            rightRatio = numberOfStepsRight
+            leftRatio = numberOfStepsRight / numberOfStepsLeft
 
+        else:
+            leftRatio = numberOfStepsLeft
+            rightRatio = numberOfStepsLeft / numberOfStepsRight
 
-
-
-
-
-
+        return leftRatio, rightRatio
 
 
     #function resteing starting position
