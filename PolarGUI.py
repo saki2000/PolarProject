@@ -90,7 +90,7 @@ class App:
 
         if (self.rightStepper.stopMotor == False):
 
-            #creating threads for each stepper
+            #creating threads for each stepper and passing data for each step
             leftStepperThread = threading.Thread(target  = self.leftStepper.stepperControl, args=[lDirection,lNoofSteps,lSpeed], daemon = True )
             rightStepperThread = threading.Thread(target = self.rightStepper.stepperControl, args=[rdirection,rNoOfSteps,rSpeed], daemon = True)
 
@@ -110,17 +110,14 @@ class App:
         #changing status of motors - bool true
         self.rightStepper.startMotors()  
 
-        executeSampleThreadLambda = lambda:(
+        executeLambdaThred = lambda:(
+
             self.disableButtons(),
             self.stepperMotorsCall("right", 96,1, "right", 96,1),
-
             self.enableButtons())
 
-        executeSampleThread = threading.Thread(target = executeSampleThreadLambda, daemon=True)
+        executeSampleThread = threading.Thread(target = executeLambdaThred, daemon=True)
         executeSampleThread.start()
-
-
-
 
 
 

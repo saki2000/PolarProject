@@ -6,26 +6,7 @@ RADIUS = 40
 STEPS_PER_REVOLUTION = 96
 STEPPER_MOTOR_DISTANCE = 30000
 
-class DataProccessing():
 
-    splitData = []
-
-    #function loading data from the hpgl file
-    #using tkinter opendialog to open window to load a file
-
-    def loadData(self):
-        self.dataFile = filedialog.askopenfilename(filetypes=(("HPGL Files", "*.hpgl"),))
-        self.dataFile = open(self.dataFile, 'r')
-        dataPoints = self.dataFile.read()           #reading from the file
-        self.dataFile.close()                       #closing file
-        splitData = dataPoints.split(";")           #spliting data on each occurance of ;
-
-        print (splitData)
-
-
-   # def switchOptions(command):
-   #     match command:
-            
 
 class PositionCalculation():
 
@@ -120,3 +101,55 @@ class PositionCalculation():
         currentPositionX = 0
         currentPositionY = 0
         
+
+
+
+class DataProccessing:
+
+   def __init__(self):
+
+    self.splitData = []
+    self.positionCalculation = PositionCalculation 
+
+    #function loading data from the hpgl file
+    #using tkinter opendialog to open window to load a file
+
+    def loadData(self):
+        self.dataFile = filedialog.askopenfilename(filetypes=(("HPGL Files", "*.hpgl"),))
+        self.dataFile = open(self.dataFile, 'r')
+        dataPoints = self.dataFile.read()           #reading from the file
+        self.dataFile.close()                       #closing file
+        splitData = dataPoints.split(";")           #spliting data on each occurance of ;
+
+
+    #interpreting all commands for loaded list - splitData
+
+    def commands(self):
+
+        for num in range(len(self.splitData)):   #for loop going through all the commands(elements) in the list
+
+            command = self.splitData[num[0:2]]
+
+            #initialise start and zero satarting position to current gondola position (0,0)
+
+            if command == "IN":
+                self.positionCalculation.resetPosition()
+                return
+
+            #printing pen number information
+
+            elif command == "SP":
+                print('Pen number+ %s + selected' %self.splitData[num][2:])
+                return
+            
+            #Pen up
+            #go to positions in the list
+
+            elif command == "PU":
+                return
+
+            #Pen down
+            #Draw following position in command list
+
+            elif command == "PD":
+                return
