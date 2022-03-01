@@ -13,7 +13,7 @@ class App:
         self.leftStepper = StepperMotor(15, 18, 23, 24)
         self.rightStepper = StepperMotor(25, 8, 12, 16)
         self.gondola = Gondola(7)
-        self.proccessData = DataProccessing
+        self.proccessData = DataProccessing()
 
         #setting title
         root.title("Polar Project")
@@ -63,7 +63,7 @@ class App:
 
     #function opening files to read
     def openFile(self):
-            self.proccessData.loadData(self)
+        self.proccessData.loadData()
 
 
     # buttong stopping execution
@@ -124,7 +124,9 @@ class App:
 
     def executeDrawing(self):
 
-        self.stepExecute(self)
+        self.proccessData.commands()
+
+        self.stepExecute()
 
 #main menu
 if __name__ == "__main__":

@@ -91,7 +91,7 @@ class PositionCalculation():
             leftRatio = numberOfStepsLeft
             rightRatio = numberOfStepsLeft / numberOfStepsRight
 
-        return leftRatio, rightRatio
+        return int(leftRatio), int(rightRatio)
 
 
     #function resteing starting position
@@ -106,10 +106,10 @@ class PositionCalculation():
 
 class DataProccessing:
 
-   def __init__(self):
+    def __init__(self):
 
-    self.splitData = []
-    self.positionCalculation = PositionCalculation 
+        self.splitData = []
+        self.positionCalculation = PositionCalculation()
 
     #function loading data from the hpgl file
     #using tkinter opendialog to open window to load a file
@@ -119,7 +119,8 @@ class DataProccessing:
         self.dataFile = open(self.dataFile, 'r')
         dataPoints = self.dataFile.read()           #reading from the file
         self.dataFile.close()                       #closing file
-        splitData = dataPoints.split(";")           #spliting data on each occurance of ;
+        self.splitData = dataPoints.split(";")           #spliting data on each occurance of ;
+        
 
 
     #interpreting all commands for loaded list - splitData
@@ -128,28 +129,49 @@ class DataProccessing:
 
         for num in range(len(self.splitData)):   #for loop going through all the commands(elements) in the list
 
-            command = self.splitData[num[0:2]]
+            command = self.splitData[num][0:2]
 
             #initialise start and zero satarting position to current gondola position (0,0)
 
             if command == "IN":
-                self.positionCalculation.resetPosition()
-                return
+                self.positionCalculation.resetStartPosition()
+                print("command IN")
+                continue
 
             #printing pen number information
 
             elif command == "SP":
                 print('Pen number+ %s + selected' %self.splitData[num][2:])
-                return
+                continue
             
             #Pen up
             #go to positions in the list
 
             elif command == "PU":
-                return
+                positions  = self.splitData[num][2:]
+                positionsList = positions.split(',')
+
+                print(positionsList)
+                
+                if (len(positionsList) == 0 or len(positionsList) == 1):
+                    continue
+
+                for n in range (0,len(positionsList),2):
+                    print("x = ", positionsList[n], " y= ", positionsList[n+1])
+                continue
 
             #Pen down
             #Draw following position in command list
 
             elif command == "PD":
-                return
+                positions  = self.splitData[num][2:]
+                positionsList = positions.split(',')
+                
+                if (len(positionsList) == 0 or len(positionsList) == 1):
+                    continue
+                
+                for n in range (0,len(positionsList),2):
+                    print("x = ", positionsList[n], " y= ", positionsList[n+1])
+                continue
+
+                
