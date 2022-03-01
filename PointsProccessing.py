@@ -12,10 +12,10 @@ class PositionCalculation():
 
     currentPositionX = 0
     currentPositionY = 0
-    currentCableLengthLeft = 0.0
-    currentCableLengthRight = 0.0
-    circumference = 0.0
-    stepDistance = 0.0
+    currentCableLengthLeft = 0
+    currentCableLengthRight = 0
+    circumference = 0
+    stepDistance = 0
 
 
     def __init__(self):
@@ -59,16 +59,16 @@ class PositionCalculation():
             direction = "right"
             numberOfSteps = (newCableLength - self.currentCableLengthRight) / self.stepDistance
 
-        return numberOfSteps, direction, newCableLength
+        return int(numberOfSteps), direction, newCableLength
 
 
     #function calculate number of steps and direction for left stepper motor\
 
     def rightMotorStepNumber(self, positionX, positionY):
 
-        newCableLength = self.rightCableLength(positionX, positionY)
+        newCableLength = self.rightCableLength(positionX, positionY) #obtaining cable lenght
 
-        if(newCableLength <= self.currentCableLengthRight):
+        if(newCableLength <= self.currentCableLengthRight):  #obtaining direction
             direction = "right"
             numberOfSteps =  (self.currentCableLengthRight - newCableLength) / self.stepDistance
 
@@ -76,7 +76,7 @@ class PositionCalculation():
             direction = "left"
             numberOfSteps = (newCableLength - self.currentCableLengthRight) / self.stepDistance
 
-        return numberOfSteps, direction, newCableLength
+        return int(numberOfSteps), direction, newCableLength
 
 
     #function calculating ration - speed of stepper motor
@@ -91,15 +91,34 @@ class PositionCalculation():
             leftRatio = numberOfStepsLeft
             rightRatio = numberOfStepsLeft / numberOfStepsRight
 
-        return int(leftRatio), int(rightRatio)
+        return leftRatio, rightRatio
 
 
     #function resteing starting position
 
     def resetStartPosition(self):
 
-        currentPositionX = 0
-        currentPositionY = 0
+        self.currentPositionX = 0
+        self.currentPositionY = 0
+
+
+    #function returning all the data for both stepper motors - speed, direction, ratio
+
+    def stepperMotorsData(self,positionX, positionY):
+        
+        numberOfStepsLeftMotor, directionLeft, newCableLengthLeft = self.leftMotorStepNumber(positionX, positionY)
+        numberOfStepsRightMotor, directionRight, newCableLengthRight = self.rightMotorStepNumber(positionX, positionY)
+        
+        #obtaining ratio
+        leftRatio, rightRatio = self.ratioCalculation(numberOfStepsLeftMotor,numberOfStepsRightMotor)
+
+        # saving new cable lengths as current
+        self.leftCableLength = newCableLengthLeft
+        self.rightCableLength = newCableLengthRight
+
+        #Retrning data for both steppermotors
+        #number of steps, direction, speed ratio
+        return numberOfStepsLeftMotor, directionLeft,leftRatio, numberOfStepsRightMotor, directionRight, rightRatio
         
 
 
@@ -141,7 +160,7 @@ class DataProccessing:
             #printing pen number information
 
             elif command == "SP":
-                print('Pen number+ %s + selected' %self.splitData[num][2:])
+                print('Pen number: %s  selected' %self.splitData[num][2:])
                 continue
             
             #Pen up
@@ -150,14 +169,14 @@ class DataProccessing:
             elif command == "PU":
                 positions  = self.splitData[num][2:]
                 positionsList = positions.split(',')
-
-                print(positionsList)
                 
+                #prevents crash when command has no parameters
                 if (len(positionsList) == 0 or len(positionsList) == 1):
                     continue
 
                 for n in range (0,len(positionsList),2):
                     print("x = ", positionsList[n], " y= ", positionsList[n+1])
+                    #
                 continue
 
             #Pen down
@@ -167,6 +186,7 @@ class DataProccessing:
                 positions  = self.splitData[num][2:]
                 positionsList = positions.split(',')
                 
+                #prevents crash when command has no parameters
                 if (len(positionsList) == 0 or len(positionsList) == 1):
                     continue
                 
