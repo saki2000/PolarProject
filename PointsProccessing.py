@@ -1,125 +1,12 @@
+import time
 from tkinter import filedialog
-from math import pi, sqrt
-from tokenize import Double
+import threading
+from types import LambdaType
 
-RADIUS = 40
-STEPS_PER_REVOLUTION = 96
-STEPPER_MOTOR_DISTANCE = 30000
+from PolarProjectMotors import StepperMotor
+from Calculation import PositionCalculation
+from Gondola import Gondola
 
-
-
-class PositionCalculation():
-
-    currentPositionX = 0
-    currentPositionY = 0
-    currentCableLengthLeft = 0
-    currentCableLengthRight = 0
-    circumference = 0
-    stepDistance = 0
-
-
-    def __init__(self):
-
-        circumference = 2*pi*RADIUS
-        stepDistnace = circumference / STEPS_PER_REVOLUTION
-        currentPositionX = STEPPER_MOTOR_DISTANCE
-        currentPositionY = STEPPER_MOTOR_DISTANCE
-        currentCableLengthLeft = self.leftCableLength(currentPositionX, currentPositionY)
-        currentCableLengthRight = self.rightCableLength(currentPositionX, currentPositionY)
-
-
-    #function calculating left cable length using pythagoras therom
-
-    def leftCableLength(self,positionX, positionY):
-
-        cableLength = sqrt (positionX**2 + positionY**2)
-        return cableLength
-
-
-    #function calculating left cable length
-
-    def rightCableLength(self, positionX, positionY):
-        
-        triangleBase = STEPPER_MOTOR_DISTANCE - positionX
-        cableLength = sqrt (triangleBase**2 + positionY**2)
-        return cableLength
-
-
-    #function calculate number of steps and direction for left stepper motor
-
-    def leftMotorStepNumber(self, positionX, positionY):
-
-        newCableLength = self.leftCableLength(positionX, positionY)
-
-        if(newCableLength <= self.currentCableLengthLeft):
-            direction = "left"
-            numberOfSteps = (self.currentCableLengthLeft - newCableLength)  / self.stepDistance
-
-        else:
-            direction = "right"
-            numberOfSteps = (newCableLength - self.currentCableLengthRight) / self.stepDistance
-
-        return int(numberOfSteps), direction, newCableLength
-
-
-    #function calculate number of steps and direction for left stepper motor\
-
-    def rightMotorStepNumber(self, positionX, positionY):
-
-        newCableLength = self.rightCableLength(positionX, positionY) #obtaining cable lenght
-
-        if(newCableLength <= self.currentCableLengthRight):  #obtaining direction
-            direction = "right"
-            numberOfSteps =  (self.currentCableLengthRight - newCableLength) / self.stepDistance
-
-        else:
-            direction = "left"
-            numberOfSteps = (newCableLength - self.currentCableLengthRight) / self.stepDistance
-
-        return int(numberOfSteps), direction, newCableLength
-
-
-    #function calculating ration - speed of stepper motor
-
-    def ratioCalculation (numberOfStepsLeft, numberOfStepsRight):
-
-        if(numberOfStepsLeft <= numberOfStepsRight):
-            rightRatio = numberOfStepsRight
-            leftRatio = numberOfStepsRight / numberOfStepsLeft
-
-        else:
-            leftRatio = numberOfStepsLeft
-            rightRatio = numberOfStepsLeft / numberOfStepsRight
-
-        return leftRatio, rightRatio
-
-
-    #function resteing starting position
-
-    def resetStartPosition(self):
-
-        self.currentPositionX = 0
-        self.currentPositionY = 0
-
-
-    #function returning all the data for both stepper motors - speed, direction, ratio
-
-    def stepperMotorsData(self,positionX, positionY):
-        
-        numberOfStepsLeftMotor, directionLeft, newCableLengthLeft = self.leftMotorStepNumber(positionX, positionY)
-        numberOfStepsRightMotor, directionRight, newCableLengthRight = self.rightMotorStepNumber(positionX, positionY)
-        
-        #obtaining ratio
-        leftRatio, rightRatio = self.ratioCalculation(numberOfStepsLeftMotor,numberOfStepsRightMotor)
-
-        # saving new cable lengths as current
-        self.leftCableLength = newCableLengthLeft
-        self.rightCableLength = newCableLengthRight
-
-        #Retrning data for both steppermotors
-        #number of steps, direction, speed ratio
-        return numberOfStepsLeftMotor, directionLeft,leftRatio, numberOfStepsRightMotor, directionRight, rightRatio
-        
 
 
 
@@ -127,8 +14,11 @@ class DataProccessing:
 
     def __init__(self):
 
+        self.leftStepper = StepperMotor(15, 18, 23, 24)
+        self.rightStepper = StepperMotor(25, 8, 12, 16)
         self.splitData = []
         self.positionCalculation = PositionCalculation()
+        self.gondola = Gondola(7)
 
     #function loading data from the hpgl file
     #using tkinter opendialog to open window to load a file
@@ -139,6 +29,60 @@ class DataProccessing:
         dataPoints = self.dataFile.read()           #reading from the file
         self.dataFile.close()                       #closing file
         self.splitData = dataPoints.split(";")           #spliting data on each occurance of ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+    #function calling in execution of stepper 
+    #motors in parralel
+    def stepperMotorsCall(self,lDirection,lNoOfSteps,lSpeed,rDirection,rNoOfSteps,rSpeed):
+
+        if (self.rightStepper.stopMotor == False):
+
+            #creating threads for each stepper and passing data for each step
+            leftStepperThread = threading.Thread(target  = self.leftStepper.stepperControl, args=[lDirection,lNoOfSteps,lSpeed], daemon = True )
+            rightStepperThread = threading.Thread(target = self.rightStepper.stepperControl, args=[rDirection,rNoOfSteps,rSpeed], daemon = True)
+
+            leftStepperThread.start()
+            rightStepperThread.start()
+
+            #joining threads
+            leftStepperThread.join()
+            rightStepperThread.join()
+        
+    
+
+    #lambda function spawning a new dameon thread that will spawn 
+    #threads and execute stepper motor calls
+    def stepExecute(self,lDirection,lNoOfSteps,lSpeed,rDirection,rNoOfSteps,rSpeed):
+
+        #changing status of motors - bool true
+        self.rightStepper.startMotors()  
+
+        executeLambdaThred = lambda:(
+
+            self.stepperMotorsCall(lDirection, lNoOfSteps, lSpeed, rDirection, rNoOfSteps, rSpeed),)
+
+        executeSampleThread = threading.Thread(target = executeLambdaThred, daemon=True)
+        executeSampleThread.start()
+
+
+
+
+
+
+
+
+
         
 
 
@@ -167,6 +111,8 @@ class DataProccessing:
             #go to positions in the list
 
             elif command == "PU":
+                self.gondola.penUp()
+                time.sleep(1)
                 positions  = self.splitData[num][2:]
                 positionsList = positions.split(',')
                 
@@ -174,15 +120,26 @@ class DataProccessing:
                 if (len(positionsList) == 0 or len(positionsList) == 1):
                     continue
 
+
                 for n in range (0,len(positionsList),2):
-                    print("x = ", positionsList[n], " y= ", positionsList[n+1])
-                    #
+
+                    #prevents division by zero
+                    if(positionsList[n] == "0" and positionsList[n+1] == "0"):
+                        continue
+
+                    else:
+                        print( positionsList[n], positionsList[n+1])
+                        directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio = self.positionCalculation.stepperMotorsData(int(positionsList[n]), int(positionsList[n+1]))
+                        print(directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio)
+                   
                 continue
 
             #Pen down
             #Draw following position in command list
 
             elif command == "PD":
+                self.gondola.penDown()
+                time.sleep(1)
                 positions  = self.splitData[num][2:]
                 positionsList = positions.split(',')
                 
@@ -191,7 +148,8 @@ class DataProccessing:
                     continue
                 
                 for n in range (0,len(positionsList),2):
-                    print("x = ", positionsList[n], " y= ", positionsList[n+1])
+                    print(positionsList[n], positionsList[n+1])
                 continue
 
                 
+

@@ -1,8 +1,6 @@
 import tkinter as tk
-import threading
 from tkinter.constants import DISABLED
 from types import LambdaType
-from PolarProjectMotors import StepperMotor
 from Gondola import Gondola
 from PointsProccessing import DataProccessing
 
@@ -10,8 +8,6 @@ from PointsProccessing import DataProccessing
 
 class App:
     def __init__(self, root):
-        self.leftStepper = StepperMotor(15, 18, 23, 24)
-        self.rightStepper = StepperMotor(25, 8, 12, 16)
         self.gondola = Gondola(7)
         self.proccessData = DataProccessing()
 
@@ -84,49 +80,12 @@ class App:
         self.btnOpenFile['state'] = 'normal'
 
 
-    #function calling in execution of stepper 
-    #motors in parralel
-    def stepperMotorsCall(self,lDirection,lNoofSteps,lSpeed,rdirection,rNoOfSteps,rSpeed):
-
-        if (self.rightStepper.stopMotor == False):
-
-            #creating threads for each stepper and passing data for each step
-            leftStepperThread = threading.Thread(target  = self.leftStepper.stepperControl, args=[lDirection,lNoofSteps,lSpeed], daemon = True )
-            rightStepperThread = threading.Thread(target = self.rightStepper.stepperControl, args=[rdirection,rNoOfSteps,rSpeed], daemon = True)
-
-            leftStepperThread.start()
-            rightStepperThread.start()
-
-            #joining threads
-            leftStepperThread.join()
-            rightStepperThread.join()
-        
-    
-
-    #lambda function spawning a new dameon thread that will spawn 
-    #threads and execute stepper motor calls
-    def stepExecute(self):
-
-        #changing status of motors - bool true
-        self.rightStepper.startMotors()  
-
-        executeLambdaThred = lambda:(
-
-            self.disableButtons(),
-            self.stepperMotorsCall("right", 96,1, "right", 96,1),
-            self.enableButtons())
-
-        executeSampleThread = threading.Thread(target = executeLambdaThred, daemon=True)
-        executeSampleThread.start()
-
-
-
-
     def executeDrawing(self):
 
         self.proccessData.commands()
 
-        self.stepExecute()
+
+
 
 #main menu
 if __name__ == "__main__":
@@ -135,15 +94,3 @@ if __name__ == "__main__":
     app = App(root)
     root.mainloop()
 
-
-
-
-            #self.stepperMotorsCall("left", 150,2, "left", 400,1),
-           # self.stepperMotorsCall("left", 50,1, "right", 200,3),
-           # self.stepperMotorsCall("right", 500,1, "right", 500,6),
-          #  self.stepperMotorsCall("left", 500,10, "left", 500,0),
-            #self.stepperMotorsCall("right", 500,1, "right", 100,6),
-           # self.stepperMotorsCall("right", 400,12, "right", 200,0),
-          #  self.stepperMotorsCall("left", 200,1, "right", 600,1.2),
-           # self.stepperMotorsCall("left", 500,1, "left", 500,1),
-           # self.stepperMotorsCall("right", 400,1, "left", 200,2),
