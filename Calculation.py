@@ -2,23 +2,22 @@ from math import pi, sqrt
 from tokenize import Double
 
 
-RADIUS = 40
-STEPS_PER_REVOLUTION = 96
-STEPPER_MOTOR_DISTANCE = 30000
-
-
 
 class PositionCalculation():
+
+    RADIUS = 40
+    STEPS_PER_REVOLUTION = 96
+    STEPPER_MOTOR_DISTANCE = 10000
 
 
     def __init__(self):
 
-        self.circumference = 2*pi*float(RADIUS)
-        self.stepDistance = self.circumference / int(STEPS_PER_REVOLUTION)
-        self.currentPositionX = int(STEPPER_MOTOR_DISTANCE)
-        self.currentPositionY = int(STEPPER_MOTOR_DISTANCE)
-        self.currentCableLengthLeft = float(STEPPER_MOTOR_DISTANCE)
-        self.currentCableLengthRight = float(STEPPER_MOTOR_DISTANCE)
+        self.circumference = 2*pi*float(self.RADIUS)
+        self.stepDistance = self.circumference / int(self.STEPS_PER_REVOLUTION)
+        self.currentPositionX = int(self.STEPPER_MOTOR_DISTANCE)
+        self.currentPositionY = int(self.STEPPER_MOTOR_DISTANCE)
+        self.currentCableLengthLeft = float(self.STEPPER_MOTOR_DISTANCE)
+        self.currentCableLengthRight = float(self.STEPPER_MOTOR_DISTANCE)
 
 
     #function calculating left cable length using pythagoras therom
@@ -32,8 +31,8 @@ class PositionCalculation():
     #function calculating left cable length
 
     def rightCableLength(self, positionX, positionY):
-        
-        triangleBase = STEPPER_MOTOR_DISTANCE - positionX
+
+        triangleBase = self.STEPPER_MOTOR_DISTANCE - positionX
         cableLength = sqrt (triangleBase**2 + positionY**2)
         return cableLength
 
@@ -50,7 +49,7 @@ class PositionCalculation():
 
         else:
             direction = "right"
-            numberOfSteps = (newCableLength - self.currentCableLengthRight) / self.stepDistance
+            numberOfSteps = (newCableLength - self.currentCableLengthLeft) / self.stepDistance
 
         return int(numberOfSteps), direction, newCableLength
 
@@ -76,23 +75,26 @@ class PositionCalculation():
 
     def ratioCalculation (self,numberOfStepsLeft, numberOfStepsRight):
 
+
+        #prevents division by 0
+
+        if numberOfStepsLeft == 0:
+            numberOfStepsLeft =1
+
+        if numberOfStepsRight == 0:
+            numberOfStepsRight = 1
+
         if(numberOfStepsLeft <= numberOfStepsRight):
-            rightRatio = numberOfStepsRight
+            rightRatio = 1
             leftRatio = numberOfStepsRight / numberOfStepsLeft
 
         else:
-            leftRatio = numberOfStepsLeft
+            leftRatio = 1
             rightRatio = numberOfStepsLeft / numberOfStepsRight
 
         return leftRatio, rightRatio
 
 
-    #function resteing starting position
-
-    def resetStartPosition(self):
-
-        self.currentPositionX = 0
-        self.currentPositionY = 0
 
 
     #function returning all the data for both stepper motors - speed, direction, ratio
@@ -101,15 +103,24 @@ class PositionCalculation():
         
         numberOfStepsLeftMotor, directionLeft, newCableLengthLeft = self.leftMotorStepNumber(positionX, positionY)
         numberOfStepsRightMotor, directionRight, newCableLengthRight = self.rightMotorStepNumber(positionX, positionY)
-        
+
         #obtaining ratio
-        leftRatio, rightRatio = self.ratioCalculation(numberOfStepsLeftMotor,numberOfStepsRightMotor)
+        leftRatio, rightRatio = self.ratioCalculation(numberOfStepsLeftMotor, numberOfStepsRightMotor)
 
         # saving new cable lengths as current
-        self.leftCableLength = newCableLengthLeft
-        self.rightCableLength = newCableLengthRight
+        self.currentCableLengthLeft = newCableLengthLeft
+        self.currentCableLengthRight = newCableLengthRight
 
         #Retrning data for both steppermotors
         #number of steps, direction, speed ratio
         return directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio
+
+
+
+    #function resteing starting position
+
+    def resetStartPosition(self):
+
+        self.currentPositionX = 0
+        self.currentPositionY = 0
         

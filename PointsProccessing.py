@@ -63,14 +63,14 @@ class DataProccessing:
 
     #lambda function spawning a new dameon thread that will spawn 
     #threads and execute stepper motor calls
-    def stepExecute(self,lDirection,lNoOfSteps,lSpeed,rDirection,rNoOfSteps,rSpeed):
+    def stepExecute(self,directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio):
 
         #changing status of motors - bool true
         self.rightStepper.startMotors()  
 
         executeLambdaThred = lambda:(
 
-            self.stepperMotorsCall(lDirection, lNoOfSteps, lSpeed, rDirection, rNoOfSteps, rSpeed),)
+            self.stepperMotorsCall(directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio),)
 
         executeSampleThread = threading.Thread(target = executeLambdaThred, daemon=True)
         executeSampleThread.start()
@@ -112,7 +112,7 @@ class DataProccessing:
 
             elif command == "PU":
                 self.gondola.penUp()
-                time.sleep(1)
+                time.sleep(0.5)
                 positions  = self.splitData[num][2:]
                 positionsList = positions.split(',')
                 
@@ -130,7 +130,7 @@ class DataProccessing:
                     else:
                         print( positionsList[n], positionsList[n+1])
                         directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio = self.positionCalculation.stepperMotorsData(int(positionsList[n]), int(positionsList[n+1]))
-                        print(directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio)
+                        self.stepExecute(directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio)
                    
                 continue
 
@@ -139,7 +139,7 @@ class DataProccessing:
 
             elif command == "PD":
                 self.gondola.penDown()
-                time.sleep(1)
+                time.sleep(0.5)
                 positions  = self.splitData[num][2:]
                 positionsList = positions.split(',')
                 
@@ -148,7 +148,14 @@ class DataProccessing:
                     continue
                 
                 for n in range (0,len(positionsList),2):
+
+                    #prevents division by zero
+                    if(positionsList[n] == "0" and positionsList[n+1] == "0"):
+                        continue
+
                     print(positionsList[n], positionsList[n+1])
+                    directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio = self.positionCalculation.stepperMotorsData(int(positionsList[n]), int(positionsList[n+1]))
+                    self.stepExecute(directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio)
                 continue
 
                 
