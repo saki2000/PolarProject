@@ -1,3 +1,4 @@
+import threading
 import tkinter as tk
 from tkinter.constants import DISABLED
 from types import LambdaType
@@ -34,12 +35,12 @@ class App:
 
 
         #servo test button down
-        self.btnExecute=tk.Button(root, text="servoDown", command=self.servoDown) 
-        self.btnExecute.place(x=400,y=300,width=60,height=60)
+        self.btnServoDown=tk.Button(root, text="servoDown", command=self.servoDown) 
+        self.btnServoDown.place(x=400,y=300,width=60,height=60)
 
         #servo test button down
-        self.btnExecute=tk.Button(root, text="servoUp", command=self.servoUp) 
-        self.btnExecute.place(x=470,y=350,width=60,height=60)
+        self.btnServoUp=tk.Button(root, text="servoUp", command=self.servoUp) 
+        self.btnServoUp.place(x=470,y=350,width=60,height=60)
 
 
         #button stoping motors
@@ -82,9 +83,16 @@ class App:
 
     def executeDrawing(self):
 
-        self.proccessData.commands()
+        self.disableButtons()
 
+        exacuteLambdaThread = lambda:(
+            self.proccessData.commands(),
+            self.enableButtons()
+        )
 
+        exacuteThread = threading.Thread(target = exacuteLambdaThread, daemon=True)
+        exacuteThread.start()
+    
 
 
 #main menu
@@ -93,4 +101,6 @@ if __name__ == "__main__":
     root = tk.Tk()
     app = App(root)
     root.mainloop()
+
+
 

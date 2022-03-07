@@ -13,11 +13,11 @@ class PositionCalculation():
     def __init__(self):
 
         self.circumference = 2*pi*float(self.RADIUS)
-        self.stepDistance = self.circumference / int(self.STEPS_PER_REVOLUTION)
+        self.stepDistance = self.circumference / self.STEPS_PER_REVOLUTION
         self.currentPositionX = int(self.STEPPER_MOTOR_DISTANCE)
         self.currentPositionY = int(self.STEPPER_MOTOR_DISTANCE)
-        self.currentCableLengthLeft = float(self.STEPPER_MOTOR_DISTANCE)
-        self.currentCableLengthRight = float(self.STEPPER_MOTOR_DISTANCE)
+        self.currentCableLengthLeft = self.leftCableLength(self.currentPositionX, self.currentPositionY)
+        self.currentCableLengthRight = self.rightCableLength(self.currentPositionX, self.currentPositionY)
 
 
     #function calculating left cable length using pythagoras therom

@@ -31,17 +31,6 @@ class DataProccessing:
         self.splitData = dataPoints.split(";")           #spliting data on each occurance of ;
 
 
-
-
-
-
-
-
-
-
-
-
-
     #function calling in execution of stepper 
     #motors in parralel
     def stepperMotorsCall(self,lDirection,lNoOfSteps,lSpeed,rDirection,rNoOfSteps,rSpeed):
@@ -60,20 +49,6 @@ class DataProccessing:
             rightStepperThread.join()
         
     
-
-    #lambda function spawning a new dameon thread that will spawn 
-    #threads and execute stepper motor calls
-    def stepExecute(self,directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio):
-
-        #changing status of motors - bool true
-        self.rightStepper.startMotors()  
-
-        executeLambdaThred = lambda:(
-
-            self.stepperMotorsCall(directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio),)
-
-        executeSampleThread = threading.Thread(target = executeLambdaThred, daemon=True)
-        executeSampleThread.start()
 
 
 
@@ -112,14 +87,13 @@ class DataProccessing:
 
             elif command == "PU":
                 self.gondola.penUp()
-                time.sleep(0.5)
+                time.sleep(1)
                 positions  = self.splitData[num][2:]
                 positionsList = positions.split(',')
                 
                 #prevents crash when command has no parameters
                 if (len(positionsList) == 0 or len(positionsList) == 1):
                     continue
-
 
                 for n in range (0,len(positionsList),2):
 
@@ -128,9 +102,12 @@ class DataProccessing:
                         continue
 
                     else:
-                        print( positionsList[n], positionsList[n+1])
+                        print( "x=",positionsList[n], "y=",positionsList[n+1])
                         directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio = self.positionCalculation.stepperMotorsData(int(positionsList[n]), int(positionsList[n+1]))
-                        self.stepExecute(directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio)
+                        print("LEFT: ","dir: ",directionLeft, "steps:", numberOfStepsLeftMotor, "ratio: ",leftRatio)
+                        print("RIGHT: ","dir: ", directionRight,"steps: ", numberOfStepsRightMotor,"ratio: ", rightRatio)
+                        self.stepperMotorsCall(directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio)
+                        time.sleep(2)
                    
                 continue
 
@@ -139,7 +116,7 @@ class DataProccessing:
 
             elif command == "PD":
                 self.gondola.penDown()
-                time.sleep(0.5)
+                time.sleep(1)
                 positions  = self.splitData[num][2:]
                 positionsList = positions.split(',')
                 
@@ -153,9 +130,12 @@ class DataProccessing:
                     if(positionsList[n] == "0" and positionsList[n+1] == "0"):
                         continue
 
-                    print(positionsList[n], positionsList[n+1])
+                    print("x=",positionsList[n], "y=",positionsList[n+1])
                     directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio = self.positionCalculation.stepperMotorsData(int(positionsList[n]), int(positionsList[n+1]))
-                    self.stepExecute(directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio)
+                    print("LEFT: ","dir: ", directionLeft,"steps: ", numberOfStepsLeftMotor,"ratio: ", leftRatio)
+                    print("RIGHT: ","dir: ", directionRight,"steps:", numberOfStepsRightMotor,"ratio: ", rightRatio)
+                    self.stepperMotorsCall(directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio)
+                    time.sleep(2)
                 continue
 
                 
