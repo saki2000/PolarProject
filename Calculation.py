@@ -6,7 +6,7 @@ from tokenize import Double
 class PositionCalculation():
 
     RADIUS = 40
-    STEPS_PER_REVOLUTION = 96
+    STEPS_PER_REVOLUTION = 192
     STEPPER_MOTOR_DISTANCE = 10000
 
 
@@ -14,15 +14,15 @@ class PositionCalculation():
 
         self.circumference = 2*pi*float(self.RADIUS)
         self.stepDistance = self.circumference / self.STEPS_PER_REVOLUTION
-        self.currentPositionX = int(self.STEPPER_MOTOR_DISTANCE)
-        self.currentPositionY = int(self.STEPPER_MOTOR_DISTANCE)
-        self.currentCableLengthLeft = self.leftCableLength(self.currentPositionX, self.currentPositionY)
-        self.currentCableLengthRight = self.rightCableLength(self.currentPositionX, self.currentPositionY)
+        self.currentPositionX = 10 #int(self.STEPPER_MOTOR_DISTANCE)
+        self.currentPositionY = 10 #int(self.STEPPER_MOTOR_DISTANCE)
+        self.currentCableLengthLeft = self.getLeftCableLength(self.currentPositionX, self.currentPositionY)
+        self.currentCableLengthRight = self.getRightCableLength(self.currentPositionX, self.currentPositionY)
 
 
     #function calculating left cable length using pythagoras therom
 
-    def leftCableLength(self,positionX, positionY):
+    def getLeftCableLength(self,positionX, positionY):
 
         cableLength = sqrt (positionX**2 + positionY**2)
         return cableLength
@@ -30,7 +30,7 @@ class PositionCalculation():
 
     #function calculating left cable length
 
-    def rightCableLength(self, positionX, positionY):
+    def getRightCableLength(self, positionX, positionY):
 
         triangleBase = self.STEPPER_MOTOR_DISTANCE - positionX
         cableLength = sqrt (triangleBase**2 + positionY**2)
@@ -39,9 +39,9 @@ class PositionCalculation():
 
     #function calculate number of steps and direction for left stepper motor
 
-    def leftMotorStepNumber(self, positionX, positionY):
+    def getLeftMotorData(self, positionX, positionY):
 
-        newCableLength = self.leftCableLength(positionX, positionY)
+        newCableLength = self.getLeftCableLength(positionX, positionY)
 
         if(newCableLength <= self.currentCableLengthLeft):
             direction = "left"
@@ -56,9 +56,9 @@ class PositionCalculation():
 
     #function calculate number of steps and direction for left stepper motor\
 
-    def rightMotorStepNumber(self, positionX, positionY):
+    def getRightMotorData(self, positionX, positionY):
 
-        newCableLength = self.rightCableLength(positionX, positionY) #obtaining cable lenght
+        newCableLength = self.getRightCableLength(positionX, positionY) #obtaining cable lenght
 
         if(newCableLength <= self.currentCableLengthRight):  #obtaining direction
             direction = "right"
@@ -73,13 +73,12 @@ class PositionCalculation():
 
     #function calculating ration - speed of stepper motor
 
-    def ratioCalculation (self,numberOfStepsLeft, numberOfStepsRight):
-
+    def getSpeedRatio (self,numberOfStepsLeft, numberOfStepsRight):
 
         #prevents division by 0
 
         if numberOfStepsLeft == 0:
-            numberOfStepsLeft =1
+            numberOfStepsLeft = 1
 
         if numberOfStepsRight == 0:
             numberOfStepsRight = 1
@@ -96,16 +95,15 @@ class PositionCalculation():
 
 
 
-
     #function returning all the data for both stepper motors - speed, direction, ratio
 
-    def stepperMotorsData(self,positionX, positionY):
+    def getMotorsData(self,positionX, positionY):
         
-        numberOfStepsLeftMotor, directionLeft, newCableLengthLeft = self.leftMotorStepNumber(positionX, positionY)
-        numberOfStepsRightMotor, directionRight, newCableLengthRight = self.rightMotorStepNumber(positionX, positionY)
+        numberOfStepsLeftMotor, directionLeft, newCableLengthLeft = self.getLeftMotorData(positionX, positionY)
+        numberOfStepsRightMotor, directionRight, newCableLengthRight = self.getRightMotorData(positionX, positionY)
 
         #obtaining ratio
-        leftRatio, rightRatio = self.ratioCalculation(numberOfStepsLeftMotor, numberOfStepsRightMotor)
+        leftRatio, rightRatio = self.getSpeedRatio(numberOfStepsLeftMotor, numberOfStepsRightMotor)
 
         # saving new cable lengths as current
         self.currentCableLengthLeft = newCableLengthLeft
@@ -123,4 +121,6 @@ class PositionCalculation():
 
         self.currentPositionX = 0
         self.currentPositionY = 0
+        self.currentCableLengthLeft = self.getLeftCableLength(self.currentPositionX, self.currentPositionY)
+        self.currentCableLengthRight = self.getRightCableLength(self.currentPositionX, self.currentPositionY)
         

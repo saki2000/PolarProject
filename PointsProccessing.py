@@ -50,20 +50,9 @@ class DataProccessing:
         
     
 
-
-
-
-
-
-
-
-
-        
-
-
     #interpreting all commands for loaded list - splitData
 
-    def commands(self):
+    def executeFile(self):
 
         for num in range(len(self.splitData)):   #for loop going through all the commands(elements) in the list
 
@@ -88,7 +77,7 @@ class DataProccessing:
             elif command == "PU":
                 self.gondola.penUp()
                 time.sleep(1)
-                positions  = self.splitData[num][2:]
+                positions  = self.splitData[num][2:]    #Spliting data to get only x,y values
                 positionsList = positions.split(',')
                 
                 #prevents crash when command has no parameters
@@ -100,15 +89,15 @@ class DataProccessing:
                     #prevents division by zero
                     if(positionsList[n] == "0" and positionsList[n+1] == "0"):
                         continue
-
+                    
+                    #geting data from the calcualtion object and calling motors to execute step
                     else:
                         print( "x=",positionsList[n], "y=",positionsList[n+1])
-                        directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio = self.positionCalculation.stepperMotorsData(int(positionsList[n]), int(positionsList[n+1]))
+                        directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio = self.positionCalculation.getMotorsData(int(positionsList[n]), int(positionsList[n+1]))
                         print("LEFT: ","dir: ",directionLeft, "steps:", numberOfStepsLeftMotor, "ratio: ",leftRatio)
                         print("RIGHT: ","dir: ", directionRight,"steps: ", numberOfStepsRightMotor,"ratio: ", rightRatio)
                         self.stepperMotorsCall(directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio)
-                        time.sleep(2)
-                   
+                        
                 continue
 
             #Pen down
@@ -131,11 +120,11 @@ class DataProccessing:
                         continue
 
                     print("x=",positionsList[n], "y=",positionsList[n+1])
-                    directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio = self.positionCalculation.stepperMotorsData(int(positionsList[n]), int(positionsList[n+1]))
+                    directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio = self.positionCalculation.getMotorsData(int(positionsList[n]), int(positionsList[n+1]))
                     print("LEFT: ","dir: ", directionLeft,"steps: ", numberOfStepsLeftMotor,"ratio: ", leftRatio)
                     print("RIGHT: ","dir: ", directionRight,"steps:", numberOfStepsRightMotor,"ratio: ", rightRatio)
                     self.stepperMotorsCall(directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio)
-                    time.sleep(2)
+                    
                 continue
 
                 
