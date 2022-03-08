@@ -81,12 +81,15 @@ class App:
         self.btnOpenFile['state'] = 'normal'
 
 
+        #function executing drawing
+        #this function spawn deamon thread that then can spawn additional
+        #threads to execute individual steps
     def executeDrawing(self):
 
         self.disableButtons()
 
         exacuteLambdaThread = lambda:(
-            self.proccessData.commands(),
+            self.proccessData.executeFile(),
             self.enableButtons()
         )
 
