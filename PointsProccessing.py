@@ -92,10 +92,11 @@ class DataProccessing:
                     
                     #geting data from the calcualtion object and calling motors to execute step
                     else:
-                        print( "x=",positionsList[n], "y=",positionsList[n+1])
+                        
+                        #getting data for stepper motors
                         directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio = self.positionCalculation.getMotorsData(int(positionsList[n]), int(positionsList[n+1]))
-                        print("LEFT: ","dir: ",directionLeft, "steps:", numberOfStepsLeftMotor, "ratio: ",leftRatio)
-                        print("RIGHT: ","dir: ", directionRight,"steps: ", numberOfStepsRightMotor,"ratio: ", rightRatio)
+
+                        #caling motors to execute step with calculated data
                         self.stepperMotorsCall(directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio)
                         
                 continue
@@ -119,12 +120,20 @@ class DataProccessing:
                     if(positionsList[n] == "0" and positionsList[n+1] == "0"):
                         continue
 
-                    print("x=",positionsList[n], "y=",positionsList[n+1])
+                    print("Current position:  x= ",self.positionCalculation.currentPositionX,"y= ", self.positionCalculation.currentPositionY )
+                    print("Moving to position: x=",positionsList[n], "y=",positionsList[n+1])
+                    print("Current cable lengths: Left motor: ",self.positionCalculation.currentCableLengthLeft, "Right: ", self.positionCalculation.currentCableLengthRight)
+
+                    #getting data from calculation to control stepper motor.
                     directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio = self.positionCalculation.getMotorsData(int(positionsList[n]), int(positionsList[n+1]))
+                    
                     print("LEFT: ","dir: ", directionLeft,"steps: ", numberOfStepsLeftMotor,"ratio: ", leftRatio)
                     print("RIGHT: ","dir: ", directionRight,"steps:", numberOfStepsRightMotor,"ratio: ", rightRatio)
-                    self.stepperMotorsCall(directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio)
                     
+                    #calling to execute calculated step
+                    self.stepperMotorsCall(directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio)
+
+                    print("New cable lengths: Left: ",self.positionCalculation.currentCableLengthLeft, "Right: ", self.positionCalculation.currentCableLengthRight)
                 continue
 
                 
