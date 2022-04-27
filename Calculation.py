@@ -5,17 +5,17 @@ from tokenize import Double
 
 class PositionCalculation():
 
-    RADIUS = 40
+    RADIUS = 5
     STEPS_PER_REVOLUTION = 192
-    STEPPER_MOTOR_DISTANCE = 10000
+    STEPPER_MOTOR_DISTANCE = 795
 
 
     def __init__(self):
 
         self.circumference = 2*pi*float(self.RADIUS)
         self.stepDistance = self.circumference / self.STEPS_PER_REVOLUTION
-        self.currentPositionX = 10 #int(self.STEPPER_MOTOR_DISTANCE)
-        self.currentPositionY = 10 #int(self.STEPPER_MOTOR_DISTANCE)
+        self.currentPositionX = int(self.STEPPER_MOTOR_DISTANCE)
+        self.currentPositionY = int(self.STEPPER_MOTOR_DISTANCE)
         self.currentCableLengthLeft = self.getLeftCableLength(self.currentPositionX, self.currentPositionY)
         self.currentCableLengthRight = self.getRightCableLength(self.currentPositionX, self.currentPositionY)
 
@@ -105,9 +105,11 @@ class PositionCalculation():
         #obtaining ratio
         leftRatio, rightRatio = self.getSpeedRatio(numberOfStepsLeftMotor, numberOfStepsRightMotor)
 
-        # saving new cable lengths as current
+        # saving new cable lengths as current and updating new position
         self.currentCableLengthLeft = newCableLengthLeft
         self.currentCableLengthRight = newCableLengthRight
+        self.currentPositionX = positionX
+        self.currentPositionY = positionY
 
         #Retrning data for both steppermotors
         #number of steps, direction, speed ratio
