@@ -157,12 +157,24 @@ class App:
     def disableButtons(self):
         self.btnExecute['state'] = 'disabled'
         self.btnOpenFile['state'] = 'disabled'
+        self.btnGondolaDown['state'] = 'disabled'
+        self.btnGondolaLeft['state'] = 'disabled'
+        self.btnGondolaRight['state'] = 'disabled'
+        self.btnGondolaUp['state'] = 'disabled'
+        self.btnServoDown['state'] = 'disabled'
+        self.btnServoUp['state'] = 'disabled'
 
 
         #function enable buttons
     def enableButtons(self):
         self.btnExecute['state'] = 'normal'
         self.btnOpenFile['state'] = 'normal'
+        self.btnGondolaDown['state'] = 'normal'
+        self.btnGondolaLeft['state'] = 'normal'
+        self.btnGondolaRight['state'] = 'normal'
+        self.btnGondolaUp['state'] = 'normal'
+        self.btnServoDown['state'] = 'normal'
+        self.btnServoUp['state'] = 'normal'
 
 
         #function executing drawing
