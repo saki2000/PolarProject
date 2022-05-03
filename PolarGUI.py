@@ -1,7 +1,7 @@
 import threading
 import tkinter as tk
 from tkinter.constants import DISABLED
-from tkinter import messagebox
+from tkinter import Label, Scale, messagebox
 from types import LambdaType
 from Gondola import Gondola
 from PointsProccessing import DataProccessing
@@ -59,7 +59,6 @@ class App:
         self.btnServoUp=tk.Button(root, text="Pen Down", command=self.servoDown) 
         self.btnServoUp.place(x=300,y=160,width=80,height=80)
 
-
         #execute loaded project button
         self.btnExecute=tk.Button(root, text="Execute", command=self.executeDrawing) 
         self.btnExecute.place(x=40,y=420,width=100,height=100)
@@ -73,6 +72,25 @@ class App:
         #open hpgl file button
         self.btnOpenFile=tk.Button(root, text="Open file", command=self.openFile) 
         self.btnOpenFile.place(x=650,y=40,width=120,height=40)
+
+
+        #updates scale sieze in calculation object
+        self.btnSetScale=tk.Button(root, text="Set", command=self.scaleAdjustment) 
+        self.btnSetScale.place(x=530,y=130,width=60,height=60)
+
+        #btnResetingStart position
+        self.btnResetStartPosition=tk.Button(root, text="Reset Start", command=self.resetStart) 
+        self.btnResetStartPosition.place(x=100,y=300,width=80,height=50)
+
+
+        #slider for adjusting scale size
+        self.scaleSlider = Scale(root, from_ = 100, to = -100, length = 200, resolution = 0.1)
+        self.scaleSlider.place(x = 450, y = 60)
+
+
+        #Scale label information
+        self.lblScale = Label(root, text = "Current Scale Set: " + str(self.proccessData.positionCalculation.scale) + "%")
+        self.lblScale.place(x = 430, y = 280)
 
     
     #Closing application
@@ -98,7 +116,7 @@ class App:
     def movePenUp(self):
         
         newPositionX = self.proccessData.positionCalculation.currentPositionX
-        newPositionY = self.checkAllowedPosition(self.proccessData.positionCalculation.currentPositionY - 10)
+        newPositionY = self.checkAllowedPosition(self.proccessData.positionCalculation.currentPositionY - 100)
 
         directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio = self.proccessData.positionCalculation.getMotorsData(newPositionX, newPositionY)
 
@@ -107,14 +125,14 @@ class App:
     def movePenDown(self):
         
         newPositionX = self.proccessData.positionCalculation.currentPositionX
-        newPositionY = self.checkAllowedPosition(self.proccessData.positionCalculation.currentPositionY + 10)
+        newPositionY = self.checkAllowedPosition(self.proccessData.positionCalculation.currentPositionY + 100)
 
         directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio = self.proccessData.positionCalculation.getMotorsData(newPositionX, newPositionY)
         self.proccessData.stepperMotorsCall(directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio)
 
     #moving gondola left by 10 points
     def movePenLeft(self):
-        newPositionX = self.checkAllowedPosition(self.proccessData.positionCalculation.currentPositionY - 10)
+        newPositionX = self.checkAllowedPosition(self.proccessData.positionCalculation.currentPositionY - 100)
         newPositionY = self.proccessData.positionCalculation.currentPositionY
 
         directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio = self.proccessData.positionCalculation.getMotorsData(newPositionX, newPositionY)
@@ -123,7 +141,7 @@ class App:
 
     #moving gondola right by 10 points
     def movePenRight(self):
-        newPositionX = self.checkAllowedPosition(self.proccessData.positionCalculation.currentPositionY + 10)
+        newPositionX = self.checkAllowedPosition(self.proccessData.positionCalculation.currentPositionY + 100)
         newPositionY = self.proccessData.positionCalculation.currentPositionY
 
         directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio = self.proccessData.positionCalculation.getMotorsData(newPositionX, newPositionY)
@@ -152,6 +170,28 @@ class App:
         self.proccessData.rightStepper.stopMotors()
         self.enableButtons()
 
+    
+    #updading scale button
+    def scaleAdjustment(self):
+
+        newScale = self.scaleSlider.get()
+        if newScale == 0:
+            newScale = 1
+        if newScale < 0:
+            newScale = abs(newScale) / 100 
+
+        self.proccessData.positionCalculation.scale = newScale / 100
+
+        if newScale < 1:
+            newScaleToPrint = 100 - (newScale * 100)
+        else:
+            newScaleToPrint = newScale * 100
+
+        #updating label.
+        self.lblScale.destroy()
+        self.lblScale = Label(root, text = "Current Scale Set: " + str(newScaleToPrint) + "%")
+        self.lblScale.place(x = 430, y = 280)
+        
 
     #function disable buttons
     def disableButtons(self):
@@ -175,6 +215,11 @@ class App:
         self.btnGondolaUp['state'] = 'normal'
         self.btnServoDown['state'] = 'normal'
         self.btnServoUp['state'] = 'normal'
+
+
+    #reseting start position
+    def resetStart(self):
+        self.proccessData.positionCalculation.resetStartPosition()
 
 
         #function executing drawing
