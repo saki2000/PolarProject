@@ -30,7 +30,6 @@ class DataProccessing:
         self.dataFile.close()                       #closing file
         self.splitData = dataPoints.split(";")           #spliting data on each occurance of ;
 
-
     #function calling in execution of stepper 
     #motors in parralel
     def stepperMotorsCall(self,lDirection,lNoOfSteps,lSpeed,rDirection,rNoOfSteps,rSpeed):
