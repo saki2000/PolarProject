@@ -4,7 +4,7 @@ import time
 
 
 class StepperMotor():               #Stepper Motor Class - Creating stepper motor object
-    DELAY = 0.0025                  #Deley which pin is polarized bewteen steps
+    DELAY = 0.01                 #Deley which pin is polarized bewteen steps
                                     #Halfstep sequnece
     HALFSTEP_SEQ = [[0,1,0,0], [0,1,0,1], [0,0,0,1], [1,0,0,1], [1,0,0,0], [0,0,1,1], [0,0,1,0], [0,1,1,0]]
     stopMotor = False

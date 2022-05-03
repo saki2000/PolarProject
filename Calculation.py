@@ -1,4 +1,5 @@
 from math import pi, sqrt
+from tkinter import Scale
 from tokenize import Double
 
 
@@ -8,14 +9,15 @@ class PositionCalculation():
     RADIUS = 5
     STEPS_PER_REVOLUTION = 192
     STEPPER_MOTOR_DISTANCE = 795
-
+    
 
     def __init__(self):
 
+        self.scale = 0.06
         self.circumference = 2*pi*float(self.RADIUS)
         self.stepDistance = self.circumference / self.STEPS_PER_REVOLUTION
-        self.currentPositionX = int(self.STEPPER_MOTOR_DISTANCE)
-        self.currentPositionY = int(self.STEPPER_MOTOR_DISTANCE)
+        self.currentPositionX = 20 #int(self.STEPPER_MOTOR_DISTANCE)
+        self.currentPositionY =  20 #int(self.STEPPER_MOTOR_DISTANCE)
         self.currentCableLengthLeft = self.getLeftCableLength(self.currentPositionX, self.currentPositionY)
         self.currentCableLengthRight = self.getRightCableLength(self.currentPositionX, self.currentPositionY)
 
@@ -94,10 +96,12 @@ class PositionCalculation():
         return leftRatio, rightRatio
 
 
-
     #function returning all the data for both stepper motors - speed, direction, ratio
-
     def getMotorsData(self,positionX, positionY):
+
+        #immplementing pictre scale
+        positionX = int(positionX * self.scale)
+        positionY = int(positionY * self.scale)
         
         numberOfStepsLeftMotor, directionLeft, newCableLengthLeft = self.getLeftMotorData(positionX, positionY)
         numberOfStepsRightMotor, directionRight, newCableLengthRight = self.getRightMotorData(positionX, positionY)
@@ -114,7 +118,6 @@ class PositionCalculation():
         #Retrning data for both steppermotors
         #number of steps, direction, speed ratio
         return directionLeft, numberOfStepsLeftMotor, leftRatio, directionRight, numberOfStepsRightMotor, rightRatio
-
 
 
     #function resteing starting position
