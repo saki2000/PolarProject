@@ -9,24 +9,15 @@ class PositionCalculation():
     RADIUS = 5
     STEPS_PER_REVOLUTION = 192
     STEPPER_MOTOR_DISTANCE = 795
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 1964b3f89373cf46e186238596f60d0bc5a3f014
 
     def __init__(self):
 
         self.scale = 0.06
         self.circumference = 2*pi*float(self.RADIUS)
         self.stepDistance = self.circumference / self.STEPS_PER_REVOLUTION
-<<<<<<< HEAD
         self.currentPositionX = 20 #int(self.STEPPER_MOTOR_DISTANCE)
         self.currentPositionY =  20 #int(self.STEPPER_MOTOR_DISTANCE)
-=======
-        self.currentPositionX = int(self.STEPPER_MOTOR_DISTANCE)
-        self.currentPositionY = int(self.STEPPER_MOTOR_DISTANCE)
->>>>>>> 1964b3f89373cf46e186238596f60d0bc5a3f014
         self.currentCableLengthLeft = self.getLeftCableLength(self.currentPositionX, self.currentPositionY)
         self.currentCableLengthRight = self.getRightCableLength(self.currentPositionX, self.currentPositionY)
 
